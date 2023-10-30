@@ -10,7 +10,7 @@ public class ClientApp {
             // Busca el objeto remoto registrado bajo el nombre "CreditCardService".
             CreditCard cardService = (CreditCard) registry.lookup("CreditCardService");
 
-            // Usando el servicio, p.ej. verifica un número de tarjeta de crédito (esto depende de tu implementación).
+            // Usando el servicio, p.ej. verifica un número de tarjeta de crédito
             boolean isValid = cardService.validateCard("1234-5678-1234-5678");
             System.out.println(isValid ? "Tarjeta válida" : "Tarjeta inválida");
 
