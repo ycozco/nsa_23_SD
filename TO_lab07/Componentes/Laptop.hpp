@@ -8,7 +8,7 @@
 class Laptop {
     std::vector<IComponent*> components;
     std::string color;
-    // Agregar campos para marcas, CPU, monitor, impresora, etc.
+    // Campos adicionales para marcas, CPU, monitor, impresora, etc.
 
 public:
     ~Laptop() {
@@ -25,10 +25,10 @@ public:
         color = col;
     }
 
-    // Implementar métodos para establecer marcas, CPU, monitor, impresora, etc.
+    // Métodos adicionales para establecer marcas, CPU, monitor, impresora, etc.
 
     void showConfiguration() const {
-        // Mostrar la configuración de la laptop aquí
+        // Implementación del método para mostrar la configuración de la laptop
     }
 };
 

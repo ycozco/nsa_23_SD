@@ -2,6 +2,7 @@
 #define LAPTOPBUILDER_HPP
 
 #include "IBuilder.hpp"
+#include "../Products/Laptop.hpp"
 
 class LaptopBuilder : public IBuilder {
     Laptop* laptop;
@@ -22,7 +23,7 @@ public:
         return this;
     }
 
-    // Implementar métodos para marcas, CPU, monitor, impresora, etc.
+    // Implementaciones adicionales para otros métodos como setBrand, setCPU, etc.
 };
 
 #endif // LAPTOPBUILDER_HPP

@@ -2,14 +2,16 @@
 #define COLOR_HPP
 
 #include "IComponent.hpp"
+#include <string>
 
 class Color : public IComponent {
     std::string color;
 
 public:
     Color(std::string col) : color(col) {}
+
     void apply() override {
-        // Aplicar el color al producto
+        // Implementación específica para aplicar el color
     }
 };
 
