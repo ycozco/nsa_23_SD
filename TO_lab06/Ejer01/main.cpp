@@ -92,9 +92,5 @@ int main() {
     return 0;
 }
 
-// file_name: ConcurrentLinkedList.cpp
-// exec: g++ -o ConcurrentLinkedList ConcurrentLinkedList.cpp && ./ConcurrentLinkedList
-
-
 // file_name: main.cpp
 // exec: g++ -o ConcurrentLinkedList main.cpp -lpthread && ./ConcurrentLinkedList

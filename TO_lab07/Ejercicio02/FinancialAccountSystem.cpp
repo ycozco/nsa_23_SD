@@ -16,13 +16,13 @@ protected:
     double saldo;  // Saldo de la cuenta
 
 public:
-    // Constructor que inicializa el saldo a 0
+    // Constructor
     Cuenta() : saldo(0) {}
 
-    // Método virtual puro para calcular el interés, a ser implementado por las subclases
+    // Método virtual 
     virtual void calcularInteres() = 0;
 
-    // Método para depositar una cantidad en la cuenta
+
     virtual void depositar(double cantidad) {
         if (cantidad > 0) {
             saldo += cantidad;
@@ -32,13 +32,13 @@ public:
         }
     }
 
-    // Sobrecarga del método depositar con una descripción de la transacción
+    // Sobrecarga del método depositar 
     virtual void depositar(double cantidad, const std::string& descripcion) {
         depositar(cantidad);
         std::cout << "Descripción de la transacción: " << descripcion << std::endl;
     }
 
-    // Método para retirar una cantidad de la cuenta
+    // Método para retirar 
     virtual void retirar(double cantidad) {
         if (cantidad <= saldo) {
             saldo -= cantidad;
@@ -48,7 +48,7 @@ public:
         }
     }
 
-    // Método para depositar de forma segura utilizando un mutex para evitar condiciones de carrera
+    // Método para depositar de forma segura utilizando un mutex 
     virtual void depositarSeguro(double cantidad) {
         std::lock_guard<std::mutex> lock(cuentaMutex);
         std::cout << "Hilo " << std::this_thread::get_id() << " accediendo a la cuenta." << std::endl;

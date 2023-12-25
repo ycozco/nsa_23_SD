@@ -10,7 +10,9 @@ private:
 
 public:
     DataPoint(const std::vector<double>& coords) : coordinates(coords) {}
+
     const std::vector<double>& GetCoordinates() const { return coordinates; }
+    
 };
 
 #endif // DATAPOINT_H

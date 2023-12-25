@@ -1,24 +1,22 @@
 #include "CSVReader.h"
 #include "DistanceCalculator.h"
-#include <thread>
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include <mutex>
 #include <vector>
 #include <algorithm>
 
 std::mutex distancesMutex;
-std::vector<std::pair<std::pair<size_t, size_t>, std::pair<double, double>>> allDistances;
+std::vector<std::pair<size_t, std::pair<double, double>>> allDistances;
 
-void CalculateDistances(const std::vector<DataPoint*>& dataPoints, size_t start, size_t end) {
-    for (size_t i = start; i < end && i < dataPoints.size(); ++i) {
-        for (size_t j = i + 1; j < dataPoints.size(); ++j) {
-            double manhattan = DistanceCalculator::CalculateManhattanDistance(*dataPoints[i], *dataPoints[j]);
-            double euclidean = DistanceCalculator::CalculateEuclideanDistance(*dataPoints[i], *dataPoints[j]);
+void CalculateDistancesFromFirst(const std::vector<DataPoint*>& dataPoints, size_t start, size_t end) {
+    for (size_t j = start; j < end && j < dataPoints.size(); ++j) {
+        double manhattan = DistanceCalculator::CalculateManhattanDistance(*dataPoints[0], *dataPoints[j]);
+        double euclidean = DistanceCalculator::CalculateEuclideanDistance(*dataPoints[0], *dataPoints[j]);
 
-            std::lock_guard<std::mutex> guard(distancesMutex);
-            allDistances.push_back({{i, j}, {manhattan, euclidean}});
-        }
+        std::lock_guard<std::mutex> guard(distancesMutex);
+        allDistances.push_back({j, {manhattan, euclidean}});
     }
 }
 
@@ -28,9 +26,17 @@ int main() {
 
     // Iniciar cálculos de distancias con multithreading
     std::vector<std::thread> threads;
-    size_t batchSize = dataPoints.size() / 4;
-    for (int i = 0; i < 4; ++i) {
-        threads.push_back(std::thread(CalculateDistances, std::ref(dataPoints), i * batchSize, (i + 1) * batchSize));
+    size_t numThreads = std::thread::hardware_concurrency();
+    size_t batchSize = dataPoints.size() / numThreads;
+    std::cout << "Número de hilos disponibles: " << numThreads << std::endl;
+    std::cout << "Tamaño de lote: " << batchSize << std::endl;
+    for (size_t i = 0; i < numThreads; ++i) {
+        size_t start = i * batchSize;
+        size_t end = (i + 1) * batchSize;
+        if (i == numThreads - 1) {
+            end = dataPoints.size(); // Asegurar que el último lote incluya todos los elementos restantes
+        }
+        threads.push_back(std::thread(CalculateDistancesFromFirst, std::ref(dataPoints), start, end));
     }
 
     for (auto& thread : threads) {
@@ -49,17 +55,15 @@ int main() {
         return 1;
     }
 
-    std::cout << "Primeras 5 distancias calculadas:" << std::endl;
-    for (size_t i = 0; i < allDistances.size(); ++i) {
-        file << "Puntos (" << allDistances[i].first.first << ", " << allDistances[i].first.second 
-             << ") - Manhattan: " << allDistances[i].second.first 
+    std::cout << "Primeras 5 distancias calculadas respecto al primer punto:" << std::endl;
+    for (size_t i = 0; i < allDistances.size() && i < 5; ++i) {
+        file << "Punto 1 a Punto " << allDistances[i].first + 1 
+             << " - Manhattan: " << allDistances[i].second.first 
              << ", Euclidiana: " << allDistances[i].second.second << std::endl;
 
-        if (i < 5) {
-            std::cout << "Puntos (" << allDistances[i].first.first << ", " << allDistances[i].first.second 
-                      << ") - Manhattan: " << allDistances[i].second.first 
-                      << ", Euclidiana: " << allDistances[i].second.second << std::endl;
-        }
+        std::cout << "Punto 1 a Punto " << allDistances[i].first + 1 
+                  << " - Manhattan: " << allDistances[i].second.first 
+                  << ", Euclidiana: " << allDistances[i].second.second << std::endl;
     }
 
     file.close();
