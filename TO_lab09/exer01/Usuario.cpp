@@ -32,3 +32,4 @@ void Usuario::operacionDepositoExterno(double cantidad, const std::shared_ptr<Cu
 void Usuario::operacionRetiroExterno(double cantidad, const std::shared_ptr<Cuenta>& cuentaExterna) {
     std::cerr << "Operación de retiro no autorizada en cuenta externa por " << nombre << std::endl;
 }
+

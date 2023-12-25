@@ -18,11 +18,16 @@ public:
 
     void agregarCuenta(const std::shared_ptr<Cuenta>& cuenta);
     void operacionDeposito(double cantidad, size_t indiceCuenta);
+    void operacionRetiro(double cantidad, size_t indiceCuenta);
     void operacionDepositoExterno(double cantidad, const std::shared_ptr<Cuenta>& cuentaExterna);
     void operacionRetiroExterno(double cantidad, const std::shared_ptr<Cuenta>& cuentaExterna);
-    void operacionRetiro(double cantidad, size_t indiceCuenta);
+
     const std::string& getNombre() const {
         return nombre;
+    }
+
+    std::shared_ptr<Cuenta> getCuenta(size_t indice) const {
+        return indice < cuentas.size() ? cuentas[indice] : nullptr;
     }
 };
 

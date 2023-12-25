@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 
+// Suponiendo que estas clases están definidas en archivos respectivos
 #include "Usuario.h"
 #include "CuentaAhorro.h"
 
@@ -26,36 +27,14 @@ void operacionUsuario(Usuario& usuario) {
             break;
         }
 
-        try {
-            if (opcionGlobal == 1) {
-                double cantidad;
-                std::cout << "[Hilo " << std::this_thread::get_id() << "] " << usuario.getNombre() << " depositando." << std::endl;
-                std::cout << "Ingrese la cantidad a depositar: ";
-                std::cin >> cantidad;
-                usuario.getCuenta(0)->depositar(cantidad);
-                std::cout << "Depósito exitoso. Nuevo saldo: " << usuario.getCuenta(0)->obtenerSaldo() << std::endl;
-            } else if (opcionGlobal == 2) {
-                double cantidad;
-                std::cout << "[Hilo " << std::this_thread::get_id() << "] " << usuario.getNombre() << " retirando." << std::endl;
-                std::cout << "Ingrese la cantidad a retirar: ";
-                std::cin >> cantidad;
-
-                // Validar si el usuario tiene fondos suficientes antes de retirar
-                if (cantidad > usuario.getCuenta(0)->obtenerSaldo()) {
-                    throw std::runtime_error("Error: Fondos insuficientes.");
-                }
-
-                usuario.getCuenta(0)->retirar(cantidad);
-                std::cout << "Retiro exitoso. Nuevo saldo: " << usuario.getCuenta(0)->obtenerSaldo() << std::endl;
-            }
-        } catch (const std::exception& e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+        if (opcionGlobal == 1) {
+            // Implementación de lógica para depositar
+        } else if (opcionGlobal == 2) {
+            // Implementación de lógica para retirar
         }
 
         usuarioSeleccionadoGlobal = "";
         opcionGlobal = 0;
-
-        // Vuelve al menú principal
         lock.unlock();
         cv.notify_all();
     }
@@ -63,8 +42,13 @@ void operacionUsuario(Usuario& usuario) {
 
 void interfazPrincipal() {
     int indiceUsuario;
+    double cantidad;
 
     std::cout << "[Hilo Principal] Iniciando menú principal." << std::endl;
+    std::cout << "Usuarios iniciales y sus saldos:" << std::endl;
+    for (const auto& [nombre, info] : usuarios) {
+        std::cout << nombre << " (Hilo: " << info.first << "), Saldo: " << info.second->getCuenta(0)->obtenerSaldo() << std::endl;
+    }
 
     while (true) {
         std::unique_lock<std::mutex> lock(mu);
@@ -86,8 +70,10 @@ void interfazPrincipal() {
             auto iter = std::next(usuarios.begin(), indiceUsuario - 1);
             usuarioSeleccionadoGlobal = iter->first;
 
-            // Se notifica a los hilos de operación que deben ejecutar la operación para el usuario seleccionado
-            cv.notify_all();
+            std::cout << "Ingrese la cantidad: ";
+            std::cin >> cantidad;
+
+            // Lógica adicional para manejar depósitos/retiros
         }
 
         if (opcionGlobal == 3) {
@@ -96,7 +82,8 @@ void interfazPrincipal() {
             break;
         }
 
-        // Vuelve al menú principal
+        lock.unlock();
+        cv.notify_all();
         cv.wait(lock, [] { return usuarioSeleccionadoGlobal.empty(); });
     }
 }
@@ -104,8 +91,8 @@ void interfazPrincipal() {
 int main() {
     // Creación de usuarios y asignación de cuentas
     Usuario usuario1("Usuario1"), usuario2("Usuario2");
-    std::shared_ptr<CuentaAhorro> cuentaUsuario1 = std::make_shared<CuentaAhorro>(),
-                                   cuentaUsuario2 = std::make_shared<CuentaAhorro>();
+    std::shared_ptr<Cuenta> cuentaUsuario1 = std::make_shared<CuentaAhorro>(),
+                           cuentaUsuario2 = std::make_shared<CuentaAhorro>();
     cuentaUsuario1->depositar(100);
     cuentaUsuario2->depositar(100);
     usuario1.agregarCuenta(cuentaUsuario1);
