@@ -1,17 +1,35 @@
-// GUIFactory.h
-#ifndef GUIFACTORY_H
-#define GUIFACTORY_H
+// Application.cpp
+#include "GUIFactory.h"
+#include "WinFactory.h"
+#include "MacFactory.h"
+#include "LinuxFactory.h"
+#include <iostream>
 
-#include "Button.h"
-#include "CheckBox.h"
+// Función para demostrar el uso de las fábricas
+void Application(const GUIFactory& factory) {
+    Button* button = factory.CreateButton();
+    CheckBox* checkbox = factory.CreateCheckBox();
+    button->Draw();
+    checkbox->Draw();
+    delete button;
+    delete checkbox;
+    factory.Draw();
+}
 
-// Interfaz abstracta para las fábricas de elementos de GUI
-class GUIFactory {
-public:
-    virtual Button* CreateButton() const = 0;
-    virtual CheckBox* CreateCheckBox() const = 0;
-    virtual void Draw() const = 0;
-    virtual ~GUIFactory() {}
-};
+int main() {
+    std::cout << "Cliente: Windows" << std::endl;
+    WinFactory winFactory;
+    Application(winFactory);
 
-#endif // GUIFACTORY_H
+    std::cout << std::endl << "Cliente: Mac" << std::endl;
+    MacFactory macFactory;
+    Application(macFactory);
+
+    std::cout << std::endl << "Cliente: Linux" << std::endl;
+    LinuxFactory linuxFactory;
+    Application(linuxFactory);
+
+    return 0;
+}
+// file name: Application.cpp
+// g++ -std=c++11 Application.cpp -o app && ./app
