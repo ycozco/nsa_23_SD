@@ -5,10 +5,12 @@
 #define CUENTAPLUSS_H
 
 #include "Cuenta.h"
+#include "Usuario.h"
 
 class CuentaPluss : public Cuenta {
 public:
-    void calcularInteres() override;
+    CuentaPluss();
+    void calcularInteres(double interes) override;
 };
 
 #endif // CUENTAPLUSS_H

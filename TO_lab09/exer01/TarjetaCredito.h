@@ -8,7 +8,8 @@
 
 class TarjetaCredito : public Cuenta {
 public:
-    void calcularInteres() override;
+    TarjetaCredito();
+    void calcularInteres(double interes) override;
 };
 
 #endif // TARJETACREDITO_H

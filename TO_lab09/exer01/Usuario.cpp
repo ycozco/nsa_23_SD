@@ -33,3 +33,30 @@ void Usuario::operacionRetiroExterno(double cantidad, const std::shared_ptr<Cuen
     std::cerr << "Operación de retiro no autorizada en cuenta externa por " << nombre << std::endl;
 }
 
+void Usuario::generarEstadoCuenta(const std::string& tipoCuenta, const std::string& fechaCorte) {
+    std::cout << "Estado de Cuenta para " << nombre << " - Tipo: " << tipoCuenta << " - Fecha de Corte: " << fechaCorte << std::endl;
+    for (const auto& cuenta : cuentas) {
+        if (cuenta->obtenerTipo() == tipoCuenta) {
+            std::cout << "Saldo actual: " << cuenta->obtenerSaldo() << std::endl;
+            // Aquí asumimos que cada cuenta tiene un método para obtener transacciones
+            auto transacciones = cuenta->obtenerTransaccionesHasta(fechaCorte);
+            for (const auto& transaccion : transacciones) {
+                std::cout << "Transacción: " << transaccion.tipo << " - Fecha: " << transaccion.fecha << std::endl;
+            }
+        }
+    }
+}
+void Usuario::generarEstadoCuenta(const std::string& fechaCorte) {
+    for (const auto& cuenta : cuentas) {
+        std::cout << "Estado de cuenta para la cuenta: " << std::endl;
+        auto transacciones = cuenta->obtenerTransaccionesHasta(fechaCorte);
+        for (const auto& transaccion : transacciones) {
+            std::cout << "Fecha: " << transaccion.fecha << ", Tipo: " << transaccion.tipo << ", Cantidad: " << transaccion.cantidad << std::endl;
+        }
+    }
+}
+
+void Usuario::finalizar() {
+
+    std::cout << "Finalizando sesión de " << nombre << std::endl;
+}

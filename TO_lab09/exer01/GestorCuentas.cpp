@@ -1,6 +1,6 @@
 // GestorCuentas.cpp
 #include "GestorCuentas.h"
-
+#include "Usuario.h"
 std::unique_ptr<GestorCuentas> GestorCuentas::instancia = nullptr;
 std::mutex GestorCuentas::mutexInstancia;
 

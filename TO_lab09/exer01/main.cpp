@@ -8,12 +8,16 @@
 
 #include "Usuario.h"
 #include "CuentaAhorro.h"
-
+#include "CuentaEmpresarial.h"
+#include "CuentaPluss.h"
+#include "Cuenta.h"
+#include "TarjetaCredito.h"
+#include "GestorCuentas.h"
 std::mutex mu;
 std::condition_variable cv;
 int opcionGlobal = 0;
 bool finalizar = false;
-std::map<std::string, std::pair<std::thread::id, Usuario*>> usuarios;
+std::map<std::string, std::pair<std::thread, Usuario*>> usuarios;
 std::string usuarioSeleccionadoGlobal;
 
 void operacionUsuario(Usuario& usuario) {
@@ -72,6 +76,7 @@ void interfazPrincipal() {
         std::cout << "1. Depositar\n";
         std::cout << "2. Retirar\n";
         std::cout << "3. Salir\n";
+        std::cout << "4. Crear Nuevo Usuario\n";
         std::cout << "[Hilo Principal] Seleccione una opción: ";
         std::cin >> opcionGlobal;
 
@@ -114,14 +119,21 @@ int main() {
     std::thread hiloUsuario1(operacionUsuario, std::ref(usuario1));
     std::thread hiloUsuario2(operacionUsuario, std::ref(usuario2));
 
-    usuarios["Usuario1"] = {hiloUsuario1.get_id(), &usuario1};
-    usuarios["Usuario2"] = {hiloUsuario2.get_id(), &usuario2};
+    usuarios["Usuario1"] = {std::move(hiloUsuario1), &usuario1};
+    usuarios["Usuario2"] = {std::move(hiloUsuario2), &usuario2};
 
     std::thread hiloInterfaz(interfazPrincipal);
 
     hiloInterfaz.join();
-    hiloUsuario1.join();
-    hiloUsuario2.join();
+
+    // Unir y limpiar todos los hilos y recursos al finalizar
+    for (auto& [nombre, par] : usuarios) {
+        par.second->finalizar(); // Asegúrate de tener un método para finalizar correctamente cada usuario
+        if (par.first.joinable()) {
+            par.first.join();
+        }
+        delete par.second; // Libera la memoria del usuario
+    }
 
     std::cout << "[Hilo Principal] Programa finalizado." << std::endl;
     return 0;

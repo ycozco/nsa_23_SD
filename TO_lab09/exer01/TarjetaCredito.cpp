@@ -1,9 +1,13 @@
 // TarjetaCredito.cpp
 #include "TarjetaCredito.h"
+#include "Usuario.h"
 
-void TarjetaCredito::calcularInteres() {
-    double tasaInteres = 0.20; // Tasa de interés para Tarjeta de Crédito.
+#include "Cuenta.h"
+void TarjetaCredito::calcularInteres(double tasaInteres){
     double interes = saldo * tasaInteres;
     saldo += interes;
     std::cout << "Interés de tarjeta de crédito aplicado: " << interes << std::endl;
+}
+TarjetaCredito::TarjetaCredito() : Cuenta("Tarjeta de Crédito") {
+    std::cout << "Tarjeta de Crédito creada." << std::endl;
 }

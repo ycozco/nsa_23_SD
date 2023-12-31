@@ -1,6 +1,7 @@
 // CuentaAhorro.h
 #include <memory>
-
+#include "Usuario.h"
+#include "Cuenta.h"
 #ifndef CUENTAAHORRO_H
 #define CUENTAAHORRO_H
 
@@ -8,7 +9,9 @@
 
 class CuentaAhorro : public Cuenta {
 public:
-    void calcularInteres() override;
+
+    CuentaAhorro();
+    void calcularInteres(double interes) override;
 };
 
 #endif // CUENTAAHORRO_H

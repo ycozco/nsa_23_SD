@@ -6,6 +6,7 @@
 #include <vector>
 #include <mutex>
 #include "Cuenta.h"
+#include "Usuario.h"
 
 class GestorCuentas {
 private:
